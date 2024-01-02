@@ -16,6 +16,7 @@ This tool uses the parallelism in go coroutines to shred a file. I still leave a
 ### $ time ./Shred -n ./junk.bin 
 
 real	1m20.968s
+
 user	0m27.919s
 sys	5m51.446s
 
@@ -30,6 +31,7 @@ sys	5m51.446s
 ## $ time shred -n 3 -u ./junk.bin 
 
 real	4m1.447s
+
 user	0m33.423s
 sys	0m29.532s
 

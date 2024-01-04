@@ -120,13 +120,13 @@ func TestShredReadOnlyFile(t *testing.T) {
 	}
 }
 func TestShredFasterThanUnixCmd(t *testing.T) {
+	println("Please wait a while (creating and deleting a 4GB file)")
 	testFile, err := os.CreateTemp("", "testfile")
 	if err != nil {
 		t.Fatalf("Failed to create temporary file: %v", err)
 	}
 	defer os.Remove(testFile.Name())
-
-	cmd := exec.Command("dd", "if=/dev/zero", "of="+testFile.Name(), "bs=1M", "count=1024")
+	cmd := exec.Command("dd", "if=/dev/zero", "of="+testFile.Name(), "bs=1M", "count=4096")
 	err = cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -137,8 +137,9 @@ func TestShredFasterThanUnixCmd(t *testing.T) {
 		t.Errorf("Shred failed: %v", err)
 	}
 	durationMyShred := time.Since(start_time)
+	println("My time(ms)=", durationMyShred.Milliseconds())
 
-	cmd = exec.Command("dd", "if=/dev/zero", "of="+testFile.Name(), "bs=1M", "count=1024")
+	cmd = exec.Command("dd", "if=/dev/zero", "of="+testFile.Name(), "bs=1M", "count=4096")
 	err = cmd.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -150,6 +151,8 @@ func TestShredFasterThanUnixCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 	durationUnixShred := time.Since(start_time)
+	println("Unix time(ms)=", durationUnixShred.Milliseconds())
+
 	if durationMyShred > durationUnixShred {
 		t.Errorf("My Shred is slower than unix shred")
 	}

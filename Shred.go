@@ -66,10 +66,11 @@ func Shred(path string) error {
 	workSize := fileSize
 	for chunk := int64(0); chunk < numChunks; chunk++ {
 		if workSize < chunkSize {
-			chunkSize = workSize
+			tasks <- Task{Offset: chunk * chunkSize, ChunkSize: workSize}
+		} else {
+			workSize -= chunkSize
+			tasks <- Task{Offset: chunk * chunkSize, ChunkSize: chunkSize}
 		}
-		workSize -= chunkSize
-		tasks <- Task{Offset: chunk * chunkSize, ChunkSize: chunkSize}
 	}
 	close(tasks)
 	//Create the worker threads if chunks are greater than 1
